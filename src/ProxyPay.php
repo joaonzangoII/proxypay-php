@@ -10,10 +10,12 @@ class ProxyPay {
 	protected $config;
 	// ProxyPay constructor
 	public function __construct($config) {
+		$caFile = __DIR__.'/../res/cacert.pem';
+
 		$this->config = (object) [
 			"host" =>  "https://api.proxypay.co.ao",
 			"apikey" => base64_encode("api:" . $config['apikey']),
-			"certificate" => $config['certificate'] 
+			"certificate" =>  $config['certificate'] || $caFile
 		];
 	}
 
