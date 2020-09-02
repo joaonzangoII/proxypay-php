@@ -5,17 +5,17 @@ use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\ClientException;
+use Exception;
 
 class ProxyPay {
 	protected $config;
 	// ProxyPay constructor
 	public function __construct($config) {
 		$caFile = __DIR__.'/../res/cacert.pem';
-
 		$this->config = (object) [
 			"host" =>  "https://api.proxypay.co.ao",
 			"apikey" => base64_encode("api:" . $config['apikey']),
-			"certificate" =>  $config['certificate'] || $caFile
+			"certificate" =>  $caFile || $config['certificate']
 		];
 	}
 
@@ -52,14 +52,12 @@ class ProxyPay {
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
 			echo $response->getBody();
-		}, function (ClientException $e) {
+		}, function (Exception $e) {
 			$response = [];
 			echo $e->getMessage();
 			return $response;
 		});
-		$promise->wait();
-
-		return $promise;
+		return $promise->wait();
 	}
 
 	/**
@@ -98,7 +96,7 @@ class ProxyPay {
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
 			echo $response->getBody();
-		}, function (ClientException $e) {
+		}, function (Exception $e) {
 			$response = [];
 			echo $e->getMessage();
 		});
@@ -120,12 +118,11 @@ class ProxyPay {
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
 			echo $response->getBody();
-		},function (ClientException $e) {
+		},function (Exception $e) {
 			$response = [];
 			return $response;
 		});
-		$promise->wait();
-		return $promise;
+		return $promise->wait();
 	}
 
 	/*
@@ -155,13 +152,12 @@ class ProxyPay {
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
 			echo $response->getBody();
-		}, function (ClientException $e) {
+		}, function (Exception $e) {
 			$response = [];
 			echo $e->getMessage();
 			return $response;
 		});
-		$promise->wait();
-		return $promise;
+		return $promise->wait();
 	}	
 
 	/*
@@ -188,14 +184,12 @@ class ProxyPay {
 		$client = new Client(['verify' => $this->config->certificate]);
 		$promise = $client->sendAsync($request)->then(function ($response) {
 			$response->getBody();
-		}, function (ClientException $e) {
+		}, function (Exception $e) {
 			$response = [];
 			echo $e->getMessage();
 			return $response;
 		});
-		$promise->wait();		
-
-		return $promise;
+		return $promise->wait();
 
 	}
 }

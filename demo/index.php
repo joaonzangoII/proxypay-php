@@ -1,7 +1,7 @@
 <?php
-namespace  stic\Demo\ProxyPayPHP;
-require __DIR__ . '/vendor/autoload.php';
-require 'src/ProxyPay.php';
+namespace stic\Demo\ProxyPayPHP;
+require '../vendor/autoload.php';
+use stic\ProxyPayPHP\ProxyPay;
 
 // var_dump(openssl_get_cert_locations());
 
