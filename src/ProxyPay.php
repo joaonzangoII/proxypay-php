@@ -51,11 +51,9 @@ class ProxyPay {
 
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
-			echo $response->getBody();
+			return $response->getBody()->getContents();
 		}, function (Exception $e) {
-			$response = [];
-			echo $e->getMessage();
-			return $response;
+			return $e->getMessage();
 		});
 		return $promise->wait();
 	}
@@ -95,10 +93,9 @@ class ProxyPay {
 		$client = new Client(['verify' => $this->config->certificate]);
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
-			echo $response->getBody();
+			return $response->getBody()->getContents();
 		}, function (Exception $e) {
-			$response = [];
-			echo $e->getMessage();
+			return $e->getMessage();
 		});
 		return $promise->wait();
 	}
@@ -117,10 +114,9 @@ class ProxyPay {
 
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
-			echo $response->getBody();
+			return $response->getBody()->getContents();
 		},function (Exception $e) {
-			$response = [];
-			return $response;
+			return $e->getMessage();
 		});
 		return $promise->wait();
 	}
@@ -151,11 +147,9 @@ class ProxyPay {
 		$client = new Client(['verify' => $this->config->certificate]);
 		$promise = $client->sendAsync($request)
 		->then(function ($response) {
-			echo $response->getBody();
+			return $response->getBody()->getContents();
 		}, function (Exception $e) {
-			$response = [];
-			echo $e->getMessage();
-			return $response;
+			return $e->getMessage();
 		});
 		return $promise->wait();
 	}	
@@ -182,12 +176,11 @@ class ProxyPay {
 			json_encode($multipleIds)
 		);
 		$client = new Client(['verify' => $this->config->certificate]);
-		$promise = $client->sendAsync($request)->then(function ($response) {
-			$response->getBody();
+		$promise = $client->sendAsync($request)
+		->then(function ($response) {
+			return $response->getBody()->getContents();
 		}, function (Exception $e) {
-			$response = [];
-			echo $e->getMessage();
-			return $response;
+			return $e->getMessage();
 		});
 		return $promise->wait();
 
