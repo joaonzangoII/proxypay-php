@@ -3,8 +3,9 @@
     "type": "library",
     "description": "ProxyPay implementation for PHP",
     "keywords": ["php","proxypay"],
-    "homepage": "https://mfsticnegocios.com",
+    "homepage": "https://sticnegocios.com",
     "license": "MIT",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Joao Nzango",

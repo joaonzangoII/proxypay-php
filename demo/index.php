@@ -3,11 +3,10 @@ namespace stic\Demo\ProxyPayPHP;
 require '../vendor/autoload.php';
 use stic\ProxyPayPHP\ProxyPay;
 
-// var_dump(openssl_get_cert_locations());
-
 $proxyPay = new ProxyPay([
     'apikey' => '', // trocar com uma key válida
-    'certificate' => 'cacert-2020-07-22.pem' // trocar com um pem válido
+    'certificate' => 'cacert-2020-07-22.pem', // trocar com um pem válido
+    'producao' => false, // default false
 ]);
 
 $data = ([

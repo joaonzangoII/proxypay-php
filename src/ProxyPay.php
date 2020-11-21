@@ -7,15 +7,61 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\ClientException;
 use Exception;
 
+class ReferenceParams {
+	public $limit;
+	public $offset;
+	public $status;
+	public $q;
+
+	public function __construct($limit = 20, $offset = 0, $status = "", $q = "") {
+		if(!is_int($limit)) {
+            throw new \InvalidArgumentException('Limit only accepts integers. Input was: '.$limit);
+		}
+
+		if(!is_int($offset)) {
+            throw new \InvalidArgumentException('Offset only accepts integers. Input was: '.$limit);
+		}
+		
+		$this->limit = $limit;
+		$this->offset = $offset;
+		$this->status = $offset;
+		$this->q = $q;
+	}
+}
+
+class PaymentParams {
+	public $limit;
+	public $offset;
+
+	public function __construct($limit = 100, $offset = 0) {
+        if(!is_int($limit)) {
+            throw new \InvalidArgumentException('Limit only accepts integers. Input was: '.$limit);
+		}
+
+		if(!is_int($offset)) {
+            throw new \InvalidArgumentException('Offset only accepts integers. Input was: '.$limit);
+		}
+		
+		$this->limit = $limit;
+		$this->offset = $offset;
+	}
+}
+
 class ProxyPay {
 	protected $config;
 	// ProxyPay constructor
 	public function __construct($config) {
 		$caFile = __DIR__.'/../res/cacert.pem';
+		if(!array_key_exists('producao', $config)) {
+			$config['producao'] = false;
+		}
+		$apiUrl = $config['producao'] 
+		? "https://api.proxypay.co.ao" 
+		: "https://api.sandbox.proxypay.co.ao";
 		$this->config = (object) [
-			"host" =>  "https://api.proxypay.co.ao",
+			"host" =>  $apiUrl,
 			"apikey" => base64_encode("api:" . $config['apikey']),
-			"certificate" =>  $caFile || $config['certificate']
+			"certificate" =>  $caFile ?? $config['certificate']
 		];
 	}
 
@@ -65,29 +111,23 @@ class ProxyPay {
 	*/
 	public function GetAllReferences($params=null){
 		if(!$params) {
-			$params = (object) [
-				"limit" => 20,
-				"offset" => 0,
-				"status" => "",
-				"q" => ""
-			];
-		}
+			$params = new ReferenceParams();
+		}else{
+			if(!is_array($params)) {
+				throw new \InvalidArgumentException('Function only accepts an array. Input was: '.$params);
+			}
 
-		$this->params = (object)[
-			"limit" =>  $params->limit || 20,
-			"offset" => $params->offset || 0,
-			"status" => $params->offset || "",
-			"q" => $params->q || ""
-		];
+			if(gettype($params) === 'array' ) {
+				$params = new ReferenceParams(...$params);
+			}
+		}
 
 		// Reference to the ProxyPay this
 		$that = $this;
-
-		$query = "?limit=" .   $this->params->limit;
-		$query .= "&offset=" . $this->params->offset;
-		$query .= "&status=" . $this->params->status;
-		$query .= "&q=" . $this->params->q;
-
+		$query = "?limit=" .   $params->limit;
+		$query .= "&offset=" . $params->offset;
+		$query .= "&status=" . $params->status;
+		$query .= "&q=" . $params->q;
 		// Send an asynchronous request.
 		$request = new Request('GET', $this->config->host . "/references" . $query, $this->create_headers([]));
 		$client = new Client(['verify' => $this->config->certificate]);
@@ -128,19 +168,18 @@ class ProxyPay {
 	*/
 	public function FetchNewPayments($params=null) {
 		if(!$params) {
-			$params = (object) [
-				"max" => 100,
-				"offset" => 0,
-			];
+			$params = new PaymentParams();
+		}else{
+			if(!is_array($params)) {
+				throw new \InvalidArgumentException('Function only accepts an array. Input was: '.$params);
+			}
+			if(gettype($params) === 'array' ) {
+				$params = new PaymentParams(...$params);
+			}
 		}
 
-		$this->params = (object)[
-			"limit" =>  $params->max || 100,
-			"offset" => $params->offset || 0,
-		];
-
-		$query = "?n=" .   $this->params->limit;
-		$query .= "&offset=" . $this->params->offset;
+		$query = "?n=" .  $params->limit;
+		$query .= "&offset=" . $params->offset;
 
 		// Send an asynchronous request.
 		$request = new Request('GET', $this->config->host . "/events/payments" . $query, $this->create_headers([]));
