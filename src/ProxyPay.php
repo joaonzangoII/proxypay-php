@@ -199,14 +199,19 @@ class ProxyPay {
 	* params: paymentid - This parameter can be a string or an array with all ids that need to be
 	* acknowledged
 	*/
-	public function AcknowledgePayments($paymentId=null) {
+	public function AcknowledgePayments($ids=null) {
 		// Check if paymentid is a string for just a single payment or an array for 
 		// multiple payments
 		$multipleIds = null;
-		if(gettype($paymentId) === "string"){
+		if(gettype($ids) === "string"){
+			$paymentId = $ids;
 			$multipleIds = null;
-		}else if(gettype($paymentId) === "object" && count($paymentId) > 0){
-			$multipleIds = ["ids" => $paymentid];
+		} else if(gettype($ids) === "array" && count($ids) > 0){
+			$paymentId = '';
+			$multipleIds = ["ids" => $ids];
+		} else if(gettype($ids) === "object" && count($ids) > 0){
+			$paymentId = '';
+			$multipleIds = ["ids" => $ids];
 		}
 
 		$request = new Request('DELETE', 
